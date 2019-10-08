@@ -15,18 +15,23 @@ let rec append a b =
     | x::xs, ys -> x::append xs ys
 
 type Env() =
-  let mutable currentPath = System.Environment.GetEnvironmentVariable("HOME").Split("/") |> Array.toList
+  let mutable currentPath =
+    System.Environment.GetEnvironmentVariable("HOME").Split("/") |> Array.toList
+
   member x.GetHome () =
     System.Environment.GetEnvironmentVariable("HOME")
+
   member x.GetCurrentPath () =
     String.Join ("/", currentPath |> List.toArray)
+
   member x.SetCurrentPath (path: string) =
-    let modifyPath (p: string) = (append (currentPath) [p]) 
+    let modifyPath (p: string) = append currentPath [p]
 
-    for p in path.Split("/") do
-      currentPath <- modifyPath p
+    path.Split("/")
+      |> fun list -> List.map (fun p -> currentPath <- modifyPath p) (list |> Array.toList)
+      |> ignore
 
-let (|Prefix|_|) (p:string) (s:string) =
+let (|Prefix|_|) (p: string) (s: string) =
     if s.StartsWith(p) then
         Some(s.Substring(p.Length))
     else
