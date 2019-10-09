@@ -10,7 +10,7 @@ let rec forever f =
   forever f
 
 let rec append a b =
-    match a, b with
+  match a, b with
     | [], ys -> ys
     | x::xs, ys -> x::append xs ys
 
@@ -22,13 +22,24 @@ type Env() =
     System.Environment.GetEnvironmentVariable("HOME")
 
   member x.GetCurrentPath () =
-    String.Join ("/", currentPath |> List.toArray)
+    if currentPath.Length = 1 then
+      "/"
+    else
+      String.Join ("/", currentPath |> List.toArray)
 
   member x.SetCurrentPath (path: string) =
     let modifyPath (p: string) = append currentPath [p]
 
     path.Split("/")
-      |> fun list -> List.map (fun p -> currentPath <- modifyPath p) (list |> Array.toList)
+      |> fun list -> List.map (fun p ->
+        match p with
+          | ".." -> 
+            let len = currentPath.Length
+            if len <= 1 then
+              currentPath |> ignore
+            else 
+              currentPath <- currentPath.[0..(len-2)]
+          | _ -> currentPath <- modifyPath p) (list |> Array.toList)
       |> ignore
 
 let (|Prefix|_|) (p: string) (s: string) =
