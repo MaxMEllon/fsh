@@ -56,4 +56,5 @@ let main =
     let line = Console.In.ReadLine()
     match line with
       | Prefix "cd " args -> env.SetCurrentPath args
+      | "pwd" -> env.GetCurrentPath() |> fun s -> printfn "%s" s
       | _ -> printfn "%s" line
