@@ -6,6 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Command/Cd.fs" />
+    <Compile Include="Command/Pwd.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
